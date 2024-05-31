@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="apple-mobile-web-app-capable"
+  content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <!-- <script type="text/javascript" src="https://code.jquery.com/jquery-1.7.1.min.js"></script> -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script defer src="js/param.js"></script>
+  <script defer src="js/script.js"></script>
+  <title>REMOTE CONTROL DEMO</title>
+  <!-- Meganeta 2024 -->
+  <!-- Please note only simplified Chinese locale is available -->
+</head>
+
+<body>
+  
+  <div class="header">
+    <h1>Remote Controller</h1>
+    <p>DEMO VER 1.0a BY メガネタ</p>
+  </div>
+
+  <div class="row">
+    <div class="column">
+      <p></p>
+    </div>
+    <div class="column">
+      <p id="connect" class="topnav">炮机未连接</p>
+      <p id="connect" class="topnav">郊狼未连接</p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="column">
+      <div id="container" class="container" width="400" height="300">
+        <p id="indicator" class="cen_text"> </p>
+      </div>
+    </div>
+    <div class="column">
+      <p></p>
+    </div>
+    
+  </div>
+
+  <div class="row">
+    <div class="button_row">
+      <button id='stop'>紧急停止 🛑</button>
+    </div>
+  </div>
+
+  <div id="links" class="topnav">
+    <div class="column">
+      <!-- settings (password required) -->
+      <a href="settings.html" onclick="loadNewHTML(event, this.href)">设置</a>
+    </div>
+    <div class="column">
+      <!-- Not available yet -->
+      <a href="dglab.html" onclick="loadNewHTML(event, this.href)">郊狼群控</a>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p id = "foot">メガネタ 2024 （速速V我5块加入我的涩涩基金） <a href="https://t.me/meganeta">个人Telegram</a>, <a href="https://twitter.com/tg_meganeta">推特/X</a></p>
+  </div>
+</body>
+</html>

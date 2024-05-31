@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="apple-mobile-web-app-capable"
+  content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script type="text/javascript" src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
+  <script defer src="js/script_set.js"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <title>REMOTE CONTROL DEMO</title>
+  <!-- Meganeta 2024 -->
+  <!-- Please note only simplified Chinese locale is available -->
+</head>
+
+<body>  
+  <div class="header">
+    <h1>SETTINGS</h1>
+    <p>DEMO VER 1.0 BY メガネタ</p>
+  </div>
+
+  <div class="input_row">
+    <div class="name_column">
+      <label class="topnav">IP 地址: </label>
+    </div>
+    <div class="input_column">
+      <input class="input" type="text" id="ip_addr" placeholder="Machine IP">
+    </div>
+  </div>
+
+  <div class="input_row">
+    <div class="name_column">
+      <label class="topnav">最大速度: </label>
+    </div>
+    <div class="input_column">
+      <input class="input" type="number" id="max_speed" placeholder="Max Speed">
+    </div>
+  </div>
+
+  <div class="input_row">
+    <div class="name_column">
+      <label class="topnav">最大连接: </label>
+    </div>
+    <div class="input_column">
+      <input class="input" type="number" id="max_client" placeholder="Max Client">
+    </div>
+  </div>
+
+  <div class="input_row">
+    <div class="name_column">
+      <label class="topnav">群控模式: </label>
+    </div>
+    <div class="input_column">
+      <select class="input" id="advanced">
+        <option value="1">启用</option>
+        <option value="0">不启用</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="input_row">
+    <div class="name_column">
+      <label class="topnav">群控时长: </label>
+    </div>
+    <div class="input_column">
+      <input class="input" type="number" id="duration" placeholder="random duration">
+    </div>
+  </div>
+
+  <div class="input_row">
+    <input class="input" type="password" id="password" placeholder="请输入密码。">
+  </div>
+
+  <div class="row">
+    <div class="button_row">
+      <button id='apply'>应用</button>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="button_row">
+      <button id='reset'>重置</button>
+    </div>
+  </div>
+
+  <div id="links" class="topnav">
+    <a href="index.html" onclick="loadNewHTML(event, this.href)">主页</a>
+  </div>
+
+  <div class="footer">
+    <p id = "foot">メガネタ 2024 （欢迎私聊投喂） <a href="https://t.me/meganeta">Telegram</a>, <a href="https://twitter.com/tg_meganeta">推特/X</a></p>
+  </div>
+</body>
+</html>

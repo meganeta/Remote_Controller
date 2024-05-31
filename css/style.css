@@ -1,0 +1,207 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
+}
+
+.unselectable {
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
+}
+
+table {
+    color:#F1F1F1;
+    width: 100%;
+    border-collapse: collapse;
+}
+th, td {
+    border: 0px;
+    padding: 8px;
+    text-align: left;
+}
+th {
+    background-color: black;
+}
+
+th:first-child,
+td:first-child {
+    width: 50%; /* First column width */
+}
+th:nth-child(2),
+td:nth-child(2) {
+    width: 30%; /* Second column width */
+}
+th:nth-child(3),
+td:nth-child(3) {
+    width: 20%; /* Third column width */
+}
+
+.container {
+    width:400px;
+    height:300px;
+    height: 100%;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+
+.cen_text {
+    display: inline-block;
+    color: #F1F1F1;
+    top: 50%;
+    left: 50%;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 386px;
+}
+
+.header {
+    background-color: #F1F1F1;
+    text-align: center;
+    padding: 10px;
+}
+
+.topnav {
+    color: #F1F1F1;
+    overflow: hidden;
+    justify-content: center;
+    text-align: center;
+    vertical-align: center;
+}
+
+a {
+    color: inherit;
+}
+
+.column {
+    float: left;
+    width: 50%;
+    padding: 5px;
+    text-align: center;
+}
+
+.chart_column {
+    float: center;
+    width: 90%;
+    padding: 10px;
+    text-align: center;
+    overflow: hidden;
+    position: relative;
+}
+
+.name_column {
+    float: left;
+    width: 30%; /* Adjust width as needed */
+    text-align: right;
+}
+
+.input_column {
+    float: left;
+    width: 70%; /* Adjust width as needed */
+    text-align: center;
+    justify-content: left;
+}
+
+.input_row {
+    width: 100%; /* Adjust width as needed */
+    display: inline;
+}
+
+.label {
+    margin-right: 5px;
+}
+
+.input {
+    width: 100%;
+    padding: 10px; /* Adjust padding as needed */
+    background-color: black; /* Set background color */
+    border: none; /* Remove border */
+    text-align:center;
+    color:#F1F1F1;
+}
+
+.button_row {
+    float: left;
+    width: 100%;
+    padding: 5px;
+}
+
+.radio_row {
+    color: #F1F1F1;
+    justify-content: center;
+    width: 100%;
+}
+
+label {
+    float: left;
+    width: 33%;
+}
+
+form { 
+    float: left;
+    width: 33%;
+}
+
+.row:after {
+content: "";
+display: table;
+clear: both;
+}
+
+@media screen and (max-width: 600px) {
+.column {
+    width: 100%;
+}
+}
+
+.footer {
+    background-color: #F1F1F1;
+    text-align: center;
+    padding: 1px;
+}
+
+video {
+    display: inline-block;
+    width: 100%;
+}
+
+button {
+    display: inline-block; 
+    width: 100%;           
+    margin:0;
+    justify-content: center;
+}
+
+html, body {
+    margin: 0; 
+    height: 100%; 
+    overflow-x: hidden;
+    background-color: rgb(0, 0, 0);
+}
+
+.popup_img {
+    display: none;
+    max-width: 100%;
+}
+
+.popup_input {
+    display: none;
+    max-width: 100%;
+}
+
+.hidden {
+    display: none;
+}
+
+img {
+    max-width: 100%;
+}
+
