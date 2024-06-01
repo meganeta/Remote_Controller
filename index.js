@@ -126,8 +126,8 @@ const app = express();
 // Serve static files (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.listen(443, ()=>{
-    console.log('HTTPS Server running on port 443');
+app.listen(80, ()=>{
+    console.log('HTTPS Server running on port 80');
 });
 
 const httpsServer = https.createServer({
@@ -462,7 +462,7 @@ function send_machine(val_speed){
 // Replace with your bot token
 let ws_con_stat = false;
 
-const token = '6887731995:AAFbJX28NU9oBq5m6y4JJlVO34KTga1TRF8';
+const token = '6887731995:AAFicw9oUmV5tP11uEgZmf62kpo_xoTWE2Q';
 
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, { polling: true });
