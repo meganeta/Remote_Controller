@@ -129,6 +129,7 @@ function draw(resize = false) {
         verticalText = "炮 机";
     }
     
+    ctx.font = '25px Arial';
     ctx.fillStyle = 'white';
     const horizontalTextWidth = ctx.measureText(horizontalText).width;
     const horizontalTextX = (canvas.width - horizontalTextWidth) / 2;
@@ -137,7 +138,8 @@ function draw(resize = false) {
     
     // Vertical Text at Left Center
     ctx.save();
-    ctx.translate(20, canvas.height / 2); // Move to the left center
+    const verticalTextWidth = ctx.measureText(verticalText).width;
+    ctx.translate(20, (canvas.height + verticalTextWidth) / 2); // Move to the left center
     ctx.rotate(-Math.PI / 2); // Rotate counterclockwise by 90 degrees
     ctx.fillText(verticalText, 0, 0);
     ctx.restore(); // Restore the previous state
