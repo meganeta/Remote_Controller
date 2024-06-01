@@ -462,7 +462,7 @@ function send_machine(val_speed){
 // Replace with your bot token
 let ws_con_stat = false;
 
-const token = '6887731995:AAFicw9oUmV5tP11uEgZmf62kpo_xoTWE2Q';
+const token = '6887731995:AAH6sywApuwSosdxSPhEBsSgaaa5WOvDbFI';
 
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, { polling: true });
