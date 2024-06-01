@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="apple-mobile-web-app-capable"
+  content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="css/notyf.min.css">
+  <script src="js/notyf.min.js"></script>
+  <script src="js/qrcode.min.js"></script>
+  <link rel="stylesheet" href="css/style.css">
+  <script defer src="js/wsConnection.js"></script>
+  <script defer src="js/index_script.js"></script>
+  <title>REMOTE CONTROL DEMO</title>
+  <!-- Meganeta 2024 -->
+  <!-- Please note only simplified Chinese locale is available -->
+</head>
+
+<body>
+  
+  <div class="header">
+    <h1>Remote Controller</h1>
+    <p>DEMO VER 1.0a BY メガネタ</p>
+  </div>
+
+  <div class="row">
+    <div class="column">
+      <p></p>
+    </div>
+    <div class="column">
+      <p id="connect" class="topnav">未连接</p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="chart" id="FMchart"></div>
+  </div>
+  <div class="row">
+    <div class="chart" id="DGchart"></div>
+  </div>
+
+  <div class="row">
+    <div id="container" class="container">
+      <canvas id="myCanvas"></canvas>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="column">
+      <p style="color: white;">郊狼通道选择</p>
+      <select id="DGchannel">
+        <option value=1>通道A</option>
+        <option value=2>通道B</option>
+      </select>
+    </div>
+    <div class="column">
+      <p style="color: white;">郊狼波形选择</p>
+      <select id="DGwave">
+        <option value="1">正弦</option>
+        <option value="2">三角</option>
+        <option value="3">脉冲</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="row">
+    <button id='stop'>紧急停止 🛑</button>
+  </div>
+
+<!--
+  <div id="links" class="topnav">
+    <div class="column">
+      <a href="settings.html" onclick="loadNewHTML(event, this.href)">设置</a>
+    </div>
+    <div class="column">
+      <a href="DGLAB.html" onclick="loadNewHTML(event, this.href)">郊狼群控</a>
+    </div>
+  </div>
+-->
+
+  <div class="footer">
+    <p id = "foot">メガネタ 2024 （速速V我5块加入我的涩涩基金） <a href="https://t.me/meganeta">个人Telegram</a>, <a href="https://twitter.com/tg_meganeta">推特/X</a></p>
+  </div>
+</body>
+</html>
