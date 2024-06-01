@@ -8,27 +8,51 @@
         canvas {
             border: 1px solid black;
         }
+
+        .chart {
+            width: 600px;
+            height: 100px;
+            border: 1px solid #ccc;
+            display: flex;
+            overflow: hidden; /* Hide overflow content */
+            background-color:#AA336A;
+        }
+
+        .bar {
+            flex:1;
+            background-color: rgb(255, 255, 255);
+            color: rgb(0, 0, 0);
+            text-align: center;
+            line-height: 200px; /* Center text vertically */
+            transition: height 0.5s ease; /* Smooth transition for height changes */
+        }
     </style>
 </head>
 <body>
     <div>
-        <canvas id="verticalChart" width="600" height="100"></canvas>
-        <canvas id="horizontalChart" width="600" height="100"></canvas>
+        <div class="chart" id="FMchart"></div>
+        <div class="chart" id="DGchart"></div>
     </div>
     <canvas id="myCanvas" width="600" height="400"></canvas>
     <p id="dotHeight">Relative height of the dot: <span id="dotHeightValue"></span></p>
     <p id="dotHeight">Relative width of the dot: <span id="dotWidthValue"></span></p>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        //Handle Charts
+        const FMchart = document.getElementById('FMchart');
+        const DGchart = document.getElementById('DGchart');
+
         //Handle Canvas and plot
         const canvas = document.getElementById('myCanvas');
         const ctx = canvas.getContext('2d');
         const dotRadius = 20;
-        let dotX = canvas.width / 2;
-        let dotY = canvas.height / 2;
+        let dotX = dotRadius;
+        let dotY = canvas.height-dotRadius;
         let isDragging = false;
-        let verticalData = [];
-        let horizontalData = [];
+        let FMData = [100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,];
+        let DGData = [100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,];
+
+        let relativeHeight;
+        let relativeWidth;
 
         //Canvas drawing
         function draw() {
@@ -40,12 +64,10 @@
             ctx.closePath();
             
             //update dot location
-            const relativeHeight = (100-(dotY-dotRadius) / (canvas.height-2*dotRadius) * 100).toFixed(2);
-            const relativeWidth = ((dotX-dotRadius) / (canvas.width-2*dotRadius) * 100).toFixed(2);
+            relativeHeight = (100-(dotY-dotRadius) / (canvas.height-2*dotRadius) * 100).toFixed(2);
+            relativeWidth = ((dotX-dotRadius) / (canvas.width-2*dotRadius) * 100).toFixed(2);
             document.getElementById('dotHeightValue').textContent = relativeHeight;
             document.getElementById('dotWidthValue').textContent = relativeWidth;
-
-            updateChartData();
         }
 
         //handle mouse events
@@ -118,61 +140,66 @@
         canvas.addEventListener('touchend', handleTouchEnd);
 
         //chart handler
-        function updateChartData() {
-            verticalData.push(((canvas.height - dotY) / canvas.height * 100).toFixed(2));
-            //if (verticalData.length()>10) {}
-            horizontalData.push((dotX / canvas.width * 100).toFixed(2));
+        function updateChart() {
+            FMData.push(100-relativeHeight);
+            FMData.shift();
+            DGData.push(100-relativeWidth);
+            DGData.shift();
 
-            verticalChart.update();
-            horizontalChart.update();
+            CreateChart(FMchart,FMData);
+            CreateChart(DGchart,DGData);
         }
 
-        // Initial chart
-        const verticalChart = new Chart(document.getElementById('verticalChart'), {
-            type: 'bar',
-            data: {
-                labels: verticalData.map((_, i) => `Move ${i + 1}`),
-                datasets: [{
-                    label: 'Vertical Position (%)',
-                    data: verticalData,
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
+        // Function to create the dynamic bar chart
+        function CreateChart(chartContainer,data) {
+            chartContainer.innerHTML = ''; // Clear existing chart
 
-        const horizontalChart = new Chart(document.getElementById('horizontalChart'), {
-            type: 'bar',
-            data: {
-                labels: horizontalData.map((_, i) => `Move ${i + 1}`),
-                datasets: [{
-                    label: 'Horizontal Position (%)',
-                    data: horizontalData,
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-
+            data.forEach(value => {
+                const bar = document.createElement('div');
+                bar.classList.add('bar');
+                bar.style.height = `${value}%`;
+                //bar.textContent = value;
+                chartContainer.appendChild(bar);
+            });
+        }
         // Initial draw
         draw();
+        let intervalId = setInterval(updateChart, 50);
 
     </script>
 </body>
 </html>
+
+
+// Function to create the dynamic bar chart
+function createChart(data) {
+    const canvas = document.getElementById('chartCanvas');
+    if (!canvas) {
+        console.error("Canvas element not found.");
+        return; // Exit the function if element is not found
+    }
+
+    // Get wrapper dimensions
+    const wrapperWidth = canvas.parentElement.offsetWidth;
+    const wrapperHeight = canvas.parentElement.offsetHeight;
+
+    // Set canvas dimensions
+    canvas.width = wrapperWidth;
+    canvas.height = wrapperHeight;
+
+    const ctx = canvas.getContext('2d');
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const barWidth = wrapperWidth / data.length;
+    const maxValue = Math.max(...data);
+    const scale = wrapperHeight / maxValue;
+
+    data.forEach((value, index) => {
+        const x = index * barWidth;
+        const height = value * scale;
+        ctx.fillStyle = 'blue';
+        ctx.fillRect(x, wrapperHeight - height, barWidth, height);
+    });
+}
