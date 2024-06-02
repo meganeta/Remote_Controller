@@ -127,22 +127,22 @@ const app = express();
 
 // Serve static files (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, 'public')));
-/*
+
 app.listen(80, ()=>{
     console.log('HTTPS Server running on port 80');
 });
-*/
+
 const httpsServer = https.createServer({
     key: privateKey,
     cert: certificate
   },app);
 
 // Start listening on port 443 (default HTTPS port)
-
+/*
 httpsServer.listen(443, () => {
     console.log('HTTPS Server running on port 443');
 });
-
+*/
 
 const wss = new WebSocket.Server({ server: httpsServer });
 
