@@ -12,9 +12,6 @@ let followBStrength = false;
 
 var wsConn = null; // 全局ws链接
 
-//FM control
-var FMconid = "";
-
 //Show status
 let Connect_status = document.getElementById('connect');
 let con_status = 0;
@@ -39,8 +36,32 @@ const waveData = {
     "3": `["4A4A4A4A64646464","4545454564646464","4040404064646464","3B3B3B3B64646464","3636363664646464","3232323264646464","2D2D2D2D64646464","2828282864646464","2323232364646464","1E1E1E1E64646464","1A1A1A1A64646464"]`
 }
 
+// Function to copy text to clipboard
+function copyTextToClipboard(text) {
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(function() {
+            alert('Text copied to clipboard. Please generate QR code and scan with DG-LAB app!');
+        }).catch(function(err) {
+            console.error('Could not copy text: ', err);
+        });
+    } else {
+        // Fallback for browsers that do not support the Clipboard API
+        let textArea = document.createElement("textarea");
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            alert('Text copied to clipboard. Please generate QR code and scan with DG-LAB app!');
+        } catch (err) {
+            console.error('Could not copy text: ', err);
+        }
+        document.body.removeChild(textArea);
+    }
+}
+
 function connectWs() {
-    wsConn = new WebSocket("ws://127.0.0.1:9999/");
+    wsConn = new WebSocket("wss://192.168.99.224:443/");
     //wsConn = new WebSocket("ws://localhost:9999/");
     wsConn.onopen = function (event) {
         console.log("WebSocket连接已建立");
@@ -61,10 +82,8 @@ function connectWs() {
             case 'FM_con':
                 if (!message.targetId) {
                     //初次连接获取网页wsid
-                    FM_id = message.clientId; // 获取 clientId
-                    console.log("炮机已连接：" + message.clientId);
+                    console.log("炮机已连接：" + message.targetId);
 
-                    targetWSId = message.targetId;
                     if(con_status == 1){
                         con_status = 3;
                         con_status_flg = ture;
@@ -74,14 +93,17 @@ function connectWs() {
                         con_status_flg = ture;
                         Connect_status.innerText = "郊狼未连接";
                     }
-                    
-                    console.log("收到targetId: " + message.clientId + "msg: " + message.message);
                 }
             case 'bind':
                 if (!message.targetId) {
                     //初次连接获取网页wsid
                     connectionId = message.clientId; // 获取 clientId
                     console.log("收到clientId：" + message.clientId);
+
+                    copyTextToClipboard("https://www.dungeon-lab.com/app-download.php#DGLAB-SOCKET#wss://192.168.99.224:443/" + connectionId);
+                    
+                    console.log("QR Code: "+"https://www.dungeon-lab.com/app-download.php#DGLAB-SOCKET#wss://192.168.99.224:443/" + connectionId)
+
                     //qrcodeImg.clear();
                     //qrcodeImg.makeCode("https://www.dungeon-lab.com/app-download.php#DGLAB-SOCKET#ws://192.168.99.224:9999/" + connectionId);
                 }
@@ -91,6 +113,7 @@ function connectWs() {
                         return;
                     }
                     targetWSId = message.targetId;
+                    
                     if(con_status == 2){
                         con_status = 3;
                         con_status_flg = ture;
@@ -182,13 +205,7 @@ function connectWs() {
 connectWs();
 
 function SendtoFM(speed) {
-    messageObj.clientId = FMconid;
-    messageObj.targetId = "";
-    messageObj.speed = speed;
-    if (!messageObj.hasOwnProperty('type'))
-        messageObj.type = "msg";
-
-    wsConn.send(JSON.stringify((messageObj)));
+    wsConn.send(JSON.stringify({speed : speed}));
 }
 
 function sendWsMsg(messageObj) {

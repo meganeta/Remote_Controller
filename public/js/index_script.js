@@ -14,6 +14,7 @@ stop.onclick = function(){
     }
 
     console.log("STOP");
+    
     FMspeed = 0;
     DGspeed = 0;
 
