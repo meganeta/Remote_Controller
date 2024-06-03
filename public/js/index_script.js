@@ -36,7 +36,7 @@ stop.onclick = function(){
 function getPassword(event) {
     event.preventDefault(); // Prevent the form from submitting
     password = document.getElementById("password").value;
-    console.log("Password: " + s);
+    console.log("Password: " + password);
 }
 
 //update speed/strength
