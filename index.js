@@ -82,9 +82,18 @@ wss.on('connection', function connection(ws) {
 
         if (FMconId && data.hasOwnProperty('speed') && data.password) {
             if (data.password == FMpassword) {
+
+                
                 try {
-                    client = clients.get(FMconId);
-                    client.send(JSON.stringify({ speed: data.speed}));
+                    if (data.speed == -1) {
+                        clients.delete(FMconId); //清除ws客户端
+                        console.log("已清除炮机" + FMconId + " ,当前size: " + clients.size)
+                        FMconId = "";
+                    } else {
+                        const client = clients.get(FMconId);
+                        client.send(JSON.stringify({ speed: data.speed}));
+                    }
+                    
                 }
                 catch (e) {
                     console.log("炮机客户端出错！");
@@ -495,7 +504,7 @@ bot.onText(/\/tease_start/, (msg) => {
     const chatId = msg.chat.id;
 
     if(init_flg){
-        bot.sendMessage(chatId, '欢迎来调教メガネタ捏！请按下方按钮来进入炮机/郊狼群控模式！（实装中...）\n Changelog v0.2b\n警告⚠：郊狼已实装，两个同时控！（\n警告⚠：炮机已实装，请手下留情，会出人命的（\n添加了速度倍率用于调整上限（需要密码）。\n处于安全考虑，放弃了远程部署。\n添加了炮机重连机能。\n添加了选择冷却机制（5秒）。\n添加了防止新消息刷屏的机制（冷却3分钟）。\n优化了界面减小消息占用面积。\n出bug或投喂敲 https://t.me/meganeta', {
+        bot.sendMessage(chatId, '欢迎使用メガネタ（智障版）捏！请按下方按钮来进入炮机/郊狼群控模式！\n Changelog v0.5b\n警告⚠：郊狼已实装，实际强度为bot显示强度的一半！（\n警告⚠：炮机已实装，实际速度为bot显示强度的一半！（\n添加了炮机重连机能。\n添加了选择冷却机制（5秒）。\n添加了防止新消息刷屏的机制（冷却3分钟）。\n优化了界面减小消息占用面积。\n出bug或投喂敲 https://t.me/meganeta', {
             reply_markup: {
                 inline_keyboard: [
                     [
@@ -549,7 +558,8 @@ bot.on('callback_query', (callbackQuery) => {
     
     if(init_flg){
         if(data != 'button_start'){
-            bot.sendMessage(chatId,`您好 ${userFirstName} 请使用 /tease_start 开始。`);
+            bot.sendMessage(chatId,`您好 ${userFirstName} 请使用 /tease_start 开始。\n炮机只能控メガネタ，郊狼请通过 https://con-meganeta.onrender.com 连接。`);
+            bot.sendMessage(chatId,`聪明男娘都会点这里： https://t.me/dajibaccta`);
         } else {
             init_flg = 0;
             

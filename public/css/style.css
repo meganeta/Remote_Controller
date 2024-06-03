@@ -55,6 +55,7 @@ a {
 }
 
 .chart {
+    position: relative;
     width: 100%;
     height: 36px;
     border: 0px;
@@ -93,7 +94,7 @@ a {
 }
 .form-inline button {
     flex-shrink: 0;
-    width: 50%;  
+    width: 25%;  
     height: 25px;
     border-width: 0;
     border-color: transparent;

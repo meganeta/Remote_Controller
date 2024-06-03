@@ -39,6 +39,12 @@ const waveData = {
     "3": `["4A4A4A4A64646464","4545454564646464","4040404064646464","3B3B3B3B64646464","3636363664646464","3232323264646464","2D2D2D2D64646464","2828282864646464","2323232364646464","1E1E1E1E64646464","1A1A1A1A64646464"]`
 }
 
+// Reset FM connection
+function resetFM(event) {
+    SendtoFM(-1); //tell the server to disconnect FM
+}
+
+
 // Function to copy text to clipboard
 function copyTextToClipboard(text) {
     if (navigator.clipboard) {
