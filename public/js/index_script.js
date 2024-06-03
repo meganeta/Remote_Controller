@@ -5,14 +5,19 @@ let DGspeed = 0;
 
 //emergency stop button
 stop.onclick = function(){
-    if (wsConn != null) {
-        SendtoFM(0);
-        addOrIncrease(3, 1, 0); //A to speed
-        addOrIncrease(3, 2, 0); //B to speed
-        clearAB(1);
-        clearAB(2);
+    try {
+        if (wsConn != null) {
+            SendtoFM(0);
+            addOrIncrease(3, 1, 0); //A to speed
+            addOrIncrease(3, 2, 0); //B to speed
+            clearAB(1);
+            clearAB(2);
+        }
     }
-
+    catch (e) {
+        console.error(e);
+    }
+    
     console.log("STOP");
     
     FMspeed = 0;
