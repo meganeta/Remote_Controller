@@ -42,6 +42,8 @@ const waveData = {
 // Reset FM connection
 function resetFM(event) {
     SendtoFM(-1); //tell the server to disconnect FM
+
+    location.reload();
 }
 
 
