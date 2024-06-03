@@ -156,7 +156,7 @@ const wsshttpsServer = https.createServer({
 //const port = process.env.PORT || 3000;
 //console.log("wss port: "+ port);
 
-const wss = new WebSocket.Server({ port: PORT });
+const wss = new WebSocket.Server({httpsServer, path: '/con'});
 
 //const wss = new WebSocket.Server({ server: httpsServer });
 
