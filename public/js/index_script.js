@@ -32,6 +32,13 @@ stop.onclick = function(){
     draw();
 };
 
+//password handler
+function getPassword(event) {
+    event.preventDefault(); // Prevent the form from submitting
+    password = document.getElementById("password").value;
+    console.log("Password: " + s);
+}
+
 //update speed/strength
 function SendtoMachine() {
     if (con_status == 1) {
@@ -260,8 +267,8 @@ function updateChart() {
     DGData.push(100-DGspeed);
     DGData.shift();
 
-    CreateChart(FMchart,FMData,verticalText);
     CreateChart(DGchart,DGData,horizontalText);
+    CreateChart(FMchart,FMData,verticalText);
 
     //SendtoMachine();
 }
@@ -289,7 +296,9 @@ function CreateChart(chartContainer,data,BackText) {
         chartContainer.appendChild(bar);
     });
 
-    set_chart_text(chartContainer,100-data[data.length-1],BackText);
+    if (BackText.length > 2){
+        set_chart_text(chartContainer,100-data[data.length-1],BackText);
+    }
 }
 
 function set_chart_text(chartContainer,Speed,BackText){

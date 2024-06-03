@@ -66,7 +66,14 @@
   </div>
 
   <div class="row">
-    <button id='stop'>紧急停止 🛑</button>
+    <button class="stop_button" id='stop'>紧急停止 🛑</button>
+  </div>
+
+  <div class="row">
+    <form class="form-inline" onsubmit="getPassword(event)">
+      <input type="password" id="password" name="password" placeholder="请输入密码！">
+      <button type="submit">我要控炮机</button>
+  </form>
   </div>
 
 <!--

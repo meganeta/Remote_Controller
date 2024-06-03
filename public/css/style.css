@@ -81,13 +81,33 @@ a {
     transition: height 0.5s ease; /* Smooth transition for height changes */
 }
 
+.form-inline {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+.form-inline input {
+    flex: 1;
+    margin-right: 10px;
+    height:25px;
+}
+.form-inline button {
+    flex-shrink: 0;
+    width: 50%;  
+    height: 25px;
+    border-width: 0;
+    border-color: transparent;
+    font-size: 15px;
+    font-weight: bold;
+}
+
 select {
     width: 100px;
     border-width: 0;
     border-color: transparent;
 }
 
-button {
+.stop_button {
     display: inline-block; 
     width: 100%;  
     height: 50px;         

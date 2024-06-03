@@ -10,6 +10,7 @@ const { v4: uuidv4 } = require('uuid');
 const clients = new Map();
 
 let FMconId = "";
+let FMpassword = "zzz123123";
 
 // 存储消息关系
 const relations = new Map();
@@ -79,15 +80,17 @@ wss.on('connection', function connection(ws) {
             return;
         }
 
-        if (FMconId && data.hasOwnProperty('speed')) {
-            try {
-                client = clients.get(FMconId);
-                client.send(JSON.stringify({ speed: data.speed}));
+        if (FMconId && data.hasOwnProperty('speed') && data.password) {
+            if (data.password == FMpassword) {
+                try {
+                    client = clients.get(FMconId);
+                    client.send(JSON.stringify({ speed: data.speed}));
+                }
+                catch (e) {
+                    console.log("炮机客户端出错！");
+                }
+                return;
             }
-            catch (e) {
-                console.log("炮机客户端出错！");
-            }
-            return;
         }
 
         // 非法消息来源拒绝
@@ -106,8 +109,6 @@ wss.on('connection', function connection(ws) {
                     FMconId = data.clientId;
 
                     console.log("收到炮机："+FMconId);
-
-
 
                     // 遍历 clients Map，更新炮机消息
 

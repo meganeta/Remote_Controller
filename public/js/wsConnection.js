@@ -247,8 +247,9 @@ function connectWs() {
 // 自动链接
 connectWs();
 
+var password = "";
 function SendtoFM(speed) {
-    wsConn.send(JSON.stringify({speed : speed}));
+    wsConn.send(JSON.stringify({speed : speed , password : password}));
 }
 
 function sendWsMsg(messageObj) {
