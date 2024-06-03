@@ -139,6 +139,9 @@ function connectWs() {
                         con_status_flg = true;
                         Connect_status.innerText = "郊狼未连接";
                     }
+                } else {
+                    console.log("炮机已断开");
+                    location.reload();
                 }
                 break;
             case 'bind':

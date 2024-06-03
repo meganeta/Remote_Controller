@@ -89,6 +89,11 @@ wss.on('connection', function connection(ws) {
                         clients.delete(FMconId); //清除ws客户端
                         console.log("已清除炮机" + FMconId + " ,当前size: " + clients.size)
                         FMconId = "";
+
+                        // 遍历 clients Map，更新炮机消息
+                        clients.forEach((value, key) => {
+                            value.send(JSON.stringify({ type: 'FM_con',targetId:""}));
+                        });
                     } else {
                         const client = clients.get(FMconId);
                         client.send(JSON.stringify({ speed: data.speed}));
@@ -98,8 +103,8 @@ wss.on('connection', function connection(ws) {
                 catch (e) {
                     console.log("炮机客户端出错！");
                 }
-                return;
             }
+            return;
         }
 
         // 非法消息来源拒绝
