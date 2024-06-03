@@ -7,7 +7,7 @@ let DGspeed = 0;
 stop.onclick = function(){
     if (wsConn != null) {
         SendtoFM(0);
-        addOrIncrease(3, 1, 0); //B to speed
+        addOrIncrease(3, 1, 0); //A to speed
         addOrIncrease(3, 2, 0); //B to speed
         clearAB(1);
         clearAB(2);
@@ -28,9 +28,9 @@ function SendtoMachine() {
     if (con_status == 1) {
         //DG
         if (wsConn != null) {
-            addOrIncrease(3, 1, DGspeed*2); //A to speed
-            addOrIncrease(3, 2, FMspeed*2); //B to speed
-    
+            addOrIncrease(3, 1, DGspeed); //A to speed
+            addOrIncrease(3, 2, FMspeed); //B to speed
+            
             sendCustomMsg(DG_wave);
         }
 
@@ -53,7 +53,7 @@ function SendtoMachine() {
         if (wsConn != null) {
             SendtoFM(FMspeed);
 
-            addOrIncrease(3, DG_channel, DGspeed*2); //A to speed
+            addOrIncrease(3, DG_channel, DGspeed); //A to speed
             addOrIncrease(3, (DG_channel-1?1:2), 0); //B to speed
     
             sendCustomMsg(DG_wave);
@@ -250,6 +250,8 @@ function updateChart() {
 
     CreateChart(FMchart,FMData);
     CreateChart(DGchart,DGData);
+
+    //SendtoMachine();
 }
 
 // Function to create the dynamic bar chart

@@ -132,6 +132,7 @@ app.listen(80, ()=>{
     console.log('HTTPS Server running on port 80');
 });
 
+
 const httpsServer = https.createServer({
     key: privateKey,
     cert: certificate
@@ -142,9 +143,17 @@ const httpsServer = https.createServer({
 httpsServer.listen(443, () => {
     console.log('HTTPS Server running on port 443');
 });
-*/
 
-const wss = new WebSocket.Server({ server: httpsServer });
+const wsshttpsServer = https.createServer({
+    key: privateKey,
+    cert: certificate
+  }).listen(8443);
+*/
+//const wss = new WebSocket.Server({ server: wsshttpsServer });
+
+const wss = new WebSocket.Server({ port: 8443 });
+
+//const wss = new WebSocket.Server({ server: httpsServer });
 
 //const wss = new WebSocket.Server({ port: 9999 });
 
@@ -160,7 +169,11 @@ wss.on('connection', function connection(ws) {
     // 发送标识符给客户端（格式固定，双方都必须获取才可以进行后续通信：比如浏览器和APP）
     ws.send(JSON.stringify({ type: 'bind', clientId, message: 'targetId', targetId: '' }));
 
-    console.log("QR Code: "+"https://www.dungeon-lab.com/app-download.php#DGLAB-SOCKET#wss://192.168.99.224:443/" + clientId)
+    if (FMconId) {
+        ws.send(JSON.stringify({ type: 'FM_con',targetId:FMconId}));
+    }
+
+    console.log("QR Code: "+"https://www.dungeon-lab.com/app-download.php#DGLAB-SOCKET#ws://ws://con-meganeta.onrender.com:8443/" + clientId)
 
     // 监听发信
     ws.on('message', function incoming(message) {
@@ -170,32 +183,42 @@ wss.on('connection', function connection(ws) {
             data = JSON.parse(message);
         }
         catch (e) {
+            console.log("非JSON数据处理");
             // 非JSON数据处理
             ws.send(JSON.stringify({ type: 'msg', clientId: "", targetId: "", message: '403' }))
             return;
         }
 
-        if (FMconId && data.speed) {
-            client = clients.get(FMconId);
-            client.send(JSON.stringify({ speed: data.speed}));
+        if (FMconId && data.hasOwnProperty('speed')) {
+            try {
+                client = clients.get(FMconId);
+                client.send(JSON.stringify({ speed: data.speed}));
+            }
+            catch (e) {
+                console.log("炮机客户端出错！");
+            }
             return;
         }
 
         // 非法消息来源拒绝
         if (clients.get(data.clientId) !== ws && clients.get(data.targetId) !== ws) {
+            console.log("非法消息来源拒绝");
             ws.send(JSON.stringify({ type: 'msg', clientId: "", targetId: "", message: '404' }))
             return;
         }
 
         if (data.type && data.clientId && data.message && data.targetId) {
+
             // 优先处理绑定关系
             const { clientId, targetId, message, type } = data;
             switch (data.type) {
                 case "FM_CON":
                     FMconId = data.clientId;
 
+                    console.log("收到炮机："+FMconId);
+
                     // 遍历 clients Map，更新炮机消息
-                    let clientId = '';
+
                     clients.forEach((value, key) => {
                         if (key != FMconId) {
                             value.send(JSON.stringify({ type: 'FM_con',targetId:FMconId}));
@@ -207,7 +230,7 @@ wss.on('connection', function connection(ws) {
                     if (clients.has(clientId) && clients.has(targetId)) {
                         // relations的双方都不存在这俩id
                         if (![clientId, targetId].some(id => relations.has(id) || [...relations.values()].includes(id))) {
-                            relations.set(clientId, targetId)
+                            relations.set(clientId, targetId);
                             const client = clients.get(clientId);
                             const sendData = { clientId, targetId, message: "200", type: "bind" }
                             ws.send(JSON.stringify(sendData));
@@ -362,6 +385,10 @@ wss.on('connection', function connection(ws) {
         })
         clients.delete(clientId); //清除ws客户端
         console.log("已清除" + clientId + " ,当前size: " + clients.size)
+
+        if(FMconId == clientId) {
+            FMconId = "";
+        }
     });
 
     ws.on('error', function (error) {
@@ -408,9 +435,11 @@ wss.on('connection', function connection(ws) {
             if (clients.size > 0) {
                 console.log(relations.size, clients.size, '发送心跳消息：' + new Date().toLocaleString());
                 clients.forEach((client, clientId) => {
-                    heartbeatMsg.clientId = clientId;
-                    heartbeatMsg.targetId = relations.get(clientId) || '';
-                    client.send(JSON.stringify(heartbeatMsg));
+                    if (clientId != FMconId) {
+                        heartbeatMsg.clientId = clientId;
+                        heartbeatMsg.targetId = relations.get(clientId) || '';
+                        client.send(JSON.stringify(heartbeatMsg));
+                    }
                 });
             }
         }, 60 * 1000); // 每分钟发送一次心跳消息
@@ -438,7 +467,7 @@ function delaySendMsg(clientId, client, target, sendDataA, sendDataB, totalSends
                 // 如果达到发送次数上限，则停止定时器
                 if (totalSendsA <= 0 && totalSendsB <= 0) {
                     clearInterval(timerId);
-                    client.send("发送完毕")
+                    //client.send("发送完毕")
                     clientTimers.delete(clientId); // 删除对应的定时器
                     resolve();
                 }
@@ -453,6 +482,13 @@ function delaySendMsg(clientId, client, target, sendDataA, sendDataB, totalSends
 //FM speed update
 let speed_init = true;
 
+var fangdou = 500; //500毫秒防抖
+const waveData = {
+    "1": `["0A0A0A0A00000000","0A0A0A0A0A0A0A0A","0A0A0A0A14141414","0A0A0A0A1E1E1E1E","0A0A0A0A28282828","0A0A0A0A32323232","0A0A0A0A3C3C3C3C","0A0A0A0A46464646","0A0A0A0A50505050","0A0A0A0A5A5A5A5A","0A0A0A0A64646464"]`,
+    "2": `["0A0A0A0A00000000","0D0D0D0D0F0F0F0F","101010101E1E1E1E","1313131332323232","1616161641414141","1A1A1A1A50505050","1D1D1D1D64646464","202020205A5A5A5A","2323232350505050","262626264B4B4B4B","2A2A2A2A41414141"]`,
+    "3": `["4A4A4A4A64646464","4545454564646464","4040404064646464","3B3B3B3B64646464","3636363664646464","3232323264646464","2D2D2D2D64646464","2828282864646464","2323232364646464","1E1E1E1E64646464","1A1A1A1A64646464"]`
+}
+
 //TODO
 function send_machine(val_speed){
 
@@ -462,11 +498,71 @@ function send_machine(val_speed){
 
     if (FMconId) {
         client = clients.get(FMconId);
-        client.send(JSON.stringify({ speed: data.speed}));
-        return;
+        client.send(JSON.stringify({ speed: val_speed}));
     } else {
         console.log("Cyber FM");
     }
+
+    relations.forEach((value, key) => { 
+        const clientId = value;
+        const targetId = key;
+
+        const client = clients.get(targetId);
+        
+        //addOrIncrease(3, 1, DGspeed); //A to speed
+        const sendType = 2;
+        const sendChannel = 1; //only channel A for now
+        const sendStrength = val_speed;
+        const msg = "strength-" + sendChannel + "+" + sendType + "+" + sendStrength;
+        const sendData = { type: "msg", clientId, targetId, message: msg };
+
+        client.send(JSON.stringify(sendData));
+
+        //addOrIncrease(3, 2, FMspeed); //B to speed
+            
+        //sendCustomMsg(waveData["1"]);
+        if (fangdouSetTimeOut) {
+            return;
+        }
+    
+        wave_type = "1";
+        const msg1 = `A:${waveData[wave_type]}`;
+        const msg2 = `B:${waveData[wave_type]}`;
+    
+        let sendtimeA = 1; // AB通道的执行时间可以独立
+        let sendtimeB = 1;
+        const target = clients.get(targetId); //发送目标
+        const sendDataA = { type: "msg", clientId, targetId, message: "pulse-" + msg1 }
+        const sendDataB = { type: "msg", clientId, targetId, message: "pulse-" + msg2 }
+        let totalSendsA = punishmentTime * sendtimeA;
+        let totalSendsB = punishmentTime * sendtimeB;
+        const timeSpace = 1000 / punishmentTime;
+    
+        console.log("tgbot郊狼消息发送中，总消息数A：" + totalSendsA + "总消息数B：" + totalSendsB + "持续时间A：" + sendtimeA + "持续时间B：" + sendtimeB)
+        if (clientTimers.has(clientId)) {
+    
+            const timerId = clientTimers.get(clientId);
+            clearInterval(timerId); // 清除定时器
+            clientTimers.delete(clientId); // 清除 Map 中的对应项
+    
+            // 发送APP波形队列清除指令
+            const clearDataA = { clientId, targetId, message: "clear-1", type: "msg" }
+            const clearDataB = { clientId, targetId, message: "clear-2", type: "msg" }
+            target.send(JSON.stringify(clearDataA));
+            target.send(JSON.stringify(clearDataB));
+            setTimeout(() => {
+                delaySendMsg(clientId, 1, target, sendDataA, sendDataB, totalSendsA, totalSendsB, timeSpace);
+            }, 150);
+        } else {
+            // 不存在未发完的消息 直接发送
+            delaySendMsg(clientId, 1, target, sendDataA, sendDataB, totalSendsA, totalSendsB, timeSpace);
+        }
+    
+        fangdouSetTimeOut = setTimeout(() => {
+            clearTimeout(fangdouSetTimeOut);
+            fangdouSetTimeOut = null;
+        }, fangdou);
+    })
 }
 
 //telegram bot
@@ -499,7 +595,7 @@ bot.onText(/\/tease_start/, (msg) => {
     const chatId = msg.chat.id;
 
     if(init_flg){
-        bot.sendMessage(chatId, '欢迎来调教メガネタ捏！请按下方按钮来进入炮机/郊狼群控模式！（实装中...）\n Changelog v0.2b\n警告⚠：炮机已实装，请手下留情，会出人命的（\n添加了速度倍率用于调整上限（需要密码）。\n处于安全考虑，放弃了远程部署。\n添加了炮机重连机能。\n添加了选择冷却机制（5秒）。\n添加了防止新消息刷屏的机制（冷却3分钟）。\n优化了界面减小消息占用面积。\n出bug或投喂敲 https://t.me/meganeta', {
+        bot.sendMessage(chatId, '欢迎来调教メガネタ捏！请按下方按钮来进入炮机/郊狼群控模式！（实装中...）\n Changelog v0.2b\n警告⚠：郊狼已实装，两个同时控！（\n警告⚠：炮机已实装，请手下留情，会出人命的（\n添加了速度倍率用于调整上限（需要密码）。\n处于安全考虑，放弃了远程部署。\n添加了炮机重连机能。\n添加了选择冷却机制（5秒）。\n添加了防止新消息刷屏的机制（冷却3分钟）。\n优化了界面减小消息占用面积。\n出bug或投喂敲 https://t.me/meganeta', {
             reply_markup: {
                 inline_keyboard: [
                     [

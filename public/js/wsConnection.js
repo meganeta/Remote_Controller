@@ -12,6 +12,9 @@ let followBStrength = false;
 
 var wsConn = null; // 全局ws链接
 
+const wss_address = "ws://con-meganeta.onrender.com:8443";
+//const wss_address = "ws://192.168.99.224:8443";
+
 //Show status
 let Connect_status = document.getElementById('connect');
 let con_status = 0;
@@ -40,7 +43,7 @@ const waveData = {
 function copyTextToClipboard(text) {
     if (navigator.clipboard) {
         navigator.clipboard.writeText(text).then(function() {
-            alert('Text copied to clipboard. Please generate QR code and scan with DG-LAB app!');
+            showToast("郊狼链接已复制到剪贴板，请使用任意二维码生成器生成二维码并使用郊狼app扫描连接。");
         }).catch(function(err) {
             console.error('Could not copy text: ', err);
         });
@@ -52,7 +55,7 @@ function copyTextToClipboard(text) {
         textArea.select();
         try {
             document.execCommand('copy');
-            alert('Text copied to clipboard. Please generate QR code and scan with DG-LAB app!');
+            showToast("郊狼链接已复制到剪贴板，请使用任意二维码生成器生成二维码并使用郊狼app扫描连接。");
         } catch (err) {
             console.error('Could not copy text: ', err);
         }
@@ -60,9 +63,45 @@ function copyTextToClipboard(text) {
     }
 }
 
+//QR code
+function openQrPopup(url) {
+    // Open a new window
+    let popup = window.open('', '郊狼websocket二维码', 'width=260,height=320');
+    if (!popup) {
+        showToast("无法显示郊狼二维码，请允许弹出窗口并刷新页面！");
+        copyTextToClipboard("https://www.dungeon-lab.com/app-download.php#DGLAB-SOCKET#"+ wss_address + "/" + connectionId);
+        return;
+    }
+
+    // Write the HTML for the popup window
+    popup.document.write(`
+        <html>
+        <head>
+            <title>郊狼二维码</title>
+        </head>
+        <body>
+            <p>仅支持郊狼3.0，请在Socket被控中扫描。</p>
+            
+            <div id="qrcode"></div>
+            <script src="js/qrcode.min.js"></script>
+            <script>
+                new QRCode(document.getElementById("qrcode"), {
+                    text: "${url}",
+                    width: 250,
+                    height: 250
+                });
+            </script>
+        </body>
+        </html>
+    `);
+
+    // Close the document to apply the written content
+    popup.document.close();
+}
+
 function connectWs() {
-    wsConn = new WebSocket("wss://192.168.99.224:443/");
-    //wsConn = new WebSocket("ws://localhost:9999/");
+    wsConn = new WebSocket(wss_address);
+
     wsConn.onopen = function (event) {
         console.log("WebSocket连接已建立");
     };
@@ -80,47 +119,49 @@ function connectWs() {
         // 根据 message.type 进行不同的处理
         switch (message.type) {
             case 'FM_con':
-                if (!message.targetId) {
-                    //初次连接获取网页wsid
+                if (message.targetId) {
                     console.log("炮机已连接：" + message.targetId);
 
                     if(con_status == 1){
                         con_status = 3;
-                        con_status_flg = ture;
+                        con_status_flg = true;
                         Connect_status.innerText = "均已连接";
                     } else {
                         con_status = 2;
-                        con_status_flg = ture;
+                        con_status_flg = true;
                         Connect_status.innerText = "郊狼未连接";
                     }
                 }
+                break;
             case 'bind':
                 if (!message.targetId) {
                     //初次连接获取网页wsid
                     connectionId = message.clientId; // 获取 clientId
                     console.log("收到clientId：" + message.clientId);
 
-                    copyTextToClipboard("https://www.dungeon-lab.com/app-download.php#DGLAB-SOCKET#wss://192.168.99.224:443/" + connectionId);
+                    openQrPopup("https://www.dungeon-lab.com/app-download.php#DGLAB-SOCKET#"+ wss_address + "/" + connectionId);
                     
-                    console.log("QR Code: "+"https://www.dungeon-lab.com/app-download.php#DGLAB-SOCKET#wss://192.168.99.224:443/" + connectionId)
+                    console.log("QR Code: "+"https://www.dungeon-lab.com/app-download.php#DGLAB-SOCKET#" + wss_address + "/" + connectionId)
 
                     //qrcodeImg.clear();
-                    //qrcodeImg.makeCode("https://www.dungeon-lab.com/app-download.php#DGLAB-SOCKET#ws://192.168.99.224:9999/" + connectionId);
+                    //qrcodeImg.makeCode("https://www.dungeon-lab.com/app-download.php#DGLAB-SOCKET#" + wss_address + "/" + connectionId);
                 }
                 else {
                     if (message.clientId != connectionId) {
-                        alert('收到不正确的target消息' + message.message)
+                        console.log('收到不正确的target消息');
+                        console.log(message);
+                        alert('收到不正确的target消息' + message.message);
                         return;
                     }
                     targetWSId = message.targetId;
                     
                     if(con_status == 2){
                         con_status = 3;
-                        con_status_flg = ture;
+                        con_status_flg = true;
                         Connect_status.innerText = "均已连接";
                     } else {
                         con_status = 1;
-                        con_status_flg = ture;
+                        con_status_flg = true;
                         Connect_status.innerText = "炮机未连接";
                     }
                     
@@ -197,6 +238,8 @@ function connectWs() {
     };
 
     wsConn.onclose = function (event) {
+        con_status = 0;
+        Connect_status.innerText = "未连接";
         showToast("连接已断开");
     };
 }
@@ -292,7 +335,7 @@ function sendCustomMsg(wave_type) {
     const msg1 = `A:${waveData[wave_type]}`;
     const msg2 = `B:${waveData[wave_type]}`;
 
-    const data = { type: "clientMssg", message: msg1, message2: msg2, time1: timeA, time2: timeB }
+    const data = { type: "clientMsg", message: msg1, message2: msg2, time1: timeA, time2: timeB }
     sendWsMsg(data)
 
     fangdouSetTimeOut = setTimeout(() => {
