@@ -80,7 +80,7 @@ function openQrPopup(url) {
             <title>郊狼二维码</title>
         </head>
         <body>
-            <p>仅支持郊狼3.0，请在Socket被控中扫描。</p>
+            <p>仅支持郊狼3.0，请发给被控让其在Socket被控中扫描。</p>
             
             <div id="qrcode"></div>
             <script src="js/qrcode.min.js"></script>

@@ -338,6 +338,9 @@ wss.on('connection', function connection(ws) {
 
 function delaySendMsg(clientId, client, target, sendDataA, sendDataB, totalSendsA, totalSendsB, timeSpace) {
     // 发信计时器 AB通道会分别发送不同的消息和不同的数量 必须等全部发送完才会取消这个消息 新消息可以覆盖
+    console.log("发送消息给郊狼！");
+    console.log(sendDataA);
+
     target.send(JSON.stringify(sendDataA)); //立即发送一次AB通道的消息
     target.send(JSON.stringify(sendDataB));
     totalSendsA--;
@@ -373,14 +376,15 @@ function delaySendMsg(clientId, client, target, sendDataA, sendDataB, totalSends
 let speed_init = true;
 
 var fangdou = 500; //500毫秒防抖
+var fangdouSetTimeOut; // 防抖定时器
 const waveData = {
     "1": `["0A0A0A0A00000000","0A0A0A0A0A0A0A0A","0A0A0A0A14141414","0A0A0A0A1E1E1E1E","0A0A0A0A28282828","0A0A0A0A32323232","0A0A0A0A3C3C3C3C","0A0A0A0A46464646","0A0A0A0A50505050","0A0A0A0A5A5A5A5A","0A0A0A0A64646464"]`,
     "2": `["0A0A0A0A00000000","0D0D0D0D0F0F0F0F","101010101E1E1E1E","1313131332323232","1616161641414141","1A1A1A1A50505050","1D1D1D1D64646464","202020205A5A5A5A","2323232350505050","262626264B4B4B4B","2A2A2A2A41414141"]`,
     "3": `["4A4A4A4A64646464","4545454564646464","4040404064646464","3B3B3B3B64646464","3636363664646464","3232323264646464","2D2D2D2D64646464","2828282864646464","2323232364646464","1E1E1E1E64646464","1A1A1A1A64646464"]`
 }
 
-//TODO
-function send_machine(val_speed){
+//TODO COMMENT FROM HERE
+function send_machine(val_speed,duration){
 
     //val_speed = parseInt(val_speed/100*40);
     
@@ -394,19 +398,24 @@ function send_machine(val_speed){
     }
 
     relations.forEach((value, key) => { 
-        const clientId = value;
-        const targetId = key;
+        const clientId = key;
+        const targetId = value;
 
         const client = clients.get(targetId);
         
         //addOrIncrease(3, 1, DGspeed); //A to speed
         const sendType = 2;
         const sendChannel = 1; //only channel A for now
-        const sendStrength = val_speed;
+        const sendStrength = parseInt(val_speed/2);
         const msg = "strength-" + sendChannel + "+" + sendType + "+" + sendStrength;
         const sendData = { type: "msg", clientId, targetId, message: msg };
 
         client.send(JSON.stringify(sendData));
+
+        const sendChannel2 = 2; //only channel B for now
+        const msg22 = "strength-" + sendChannel2 + "+" + sendType + "+" + sendStrength;
+        const sendData2 = { type: "msg", clientId, targetId, message: msg22 };
+        client.send(JSON.stringify(sendData2));
 
         //addOrIncrease(3, 2, FMspeed); //B to speed
             
@@ -419,8 +428,8 @@ function send_machine(val_speed){
         const msg1 = `A:${waveData[wave_type]}`;
         const msg2 = `B:${waveData[wave_type]}`;
     
-        let sendtimeA = 1; // AB通道的执行时间可以独立
-        let sendtimeB = 1;
+        let sendtimeA = duration; // AB通道的执行时间可以独立
+        let sendtimeB = duration;
         const target = clients.get(targetId); //发送目标
         const sendDataA = { type: "msg", clientId, targetId, message: "pulse-" + msg1 }
         const sendDataB = { type: "msg", clientId, targetId, message: "pulse-" + msg2 }
@@ -430,7 +439,7 @@ function send_machine(val_speed){
     
         console.log("tgbot郊狼消息发送中，总消息数A：" + totalSendsA + "总消息数B：" + totalSendsB + "持续时间A：" + sendtimeA + "持续时间B：" + sendtimeB)
         if (clientTimers.has(clientId)) {
-    
+            
             const timerId = clientTimers.get(clientId);
             clearInterval(timerId); // 清除定时器
             clientTimers.delete(clientId); // 清除 Map 中的对应项
@@ -521,7 +530,7 @@ bot.on('callback_query', (callbackQuery) => {
         cd_msg = "即将冷却...";
         last_user_cooldown = new Date();
         last_user_count++;
-    } else if (last_user_count > 3) {        
+    } else if (last_user_count > 3 && userSelectList.length > 0) {        
         cd_msg = cd_msg_saved;
         cd_msg_saved = cd_msg_saved + ".";
         handleControlMessage(chatId,1);
@@ -546,7 +555,7 @@ bot.on('callback_query', (callbackQuery) => {
             if(FMconId){
                 //bot.sendMessage(chatId,`${userFirstName} 开始了捏!`);
             } else {
-                bot.sendMessage(chatId,`炮机未连接，玩赛博炮机捏~`);
+                bot.sendMessage(chatId,`炮机未连接，可以控郊狼捏~`);
             }
             handleControlMessage(chatId,0);
         }
@@ -588,11 +597,7 @@ bot.on('callback_query', (callbackQuery) => {
 function handlecase(chatId,userFirstName,MinVal,MinVal_Var,MinDuration,MinDuration_Var,mode){
     if (userSelectList.length < 1) {
         handleGeneration(userFirstName,MinVal,MinVal_Var,MinDuration,MinDuration_Var,mode,chatId);
-        if(new_msg_flg){
-            handleControlMessage(chatId,0);
-        } else {
-            handleControlMessage(chatId,1);
-        }
+        handleControlMessage(chatId,new_msg_flg?0:1);
     } else if (userSelectList.length < 8) {
         handleGeneration(userFirstName,MinVal,MinVal_Var,MinDuration,MinDuration_Var,mode,chatId);
         handleControlMessage(chatId,1);
@@ -607,7 +612,7 @@ function handleGeneration(userFirstName,MinVal,MinVal_Var,MinDuration,MinDuratio
     speed_list.push(val_speed);
     duration_list.push(duration);
     if(speed_init){
-        send_machine(speed_list[0]);
+        send_machine(speed_list[0],duration);
         speed_init = false;
     }
 
@@ -617,9 +622,9 @@ function handleGeneration(userFirstName,MinVal,MinVal_Var,MinDuration,MinDuratio
         speed_list.shift();
         duration_list.shift();
         if(speed_list.length>0){
-            send_machine(speed_list[0]);
+            send_machine(speed_list[0],duration_list[0]);
         } else {
-            send_machine(0);
+            send_machine(0,0);
         }
 
         if(duration_list.length>0){

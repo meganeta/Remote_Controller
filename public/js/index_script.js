@@ -37,8 +37,8 @@ function SendtoMachine() {
     if (con_status == 1) {
         //DG
         if (wsConn != null) {
-            addOrIncrease(3, 1, DGspeed); //A to speed
-            addOrIncrease(3, 2, FMspeed); //B to speed
+            addOrIncrease(3, 1, parseInt(DGspeed/2)); //A to speed
+            addOrIncrease(3, 2, parseInt(FMspeed/2)); //B to speed
             
             sendCustomMsg(DG_wave);
         }
@@ -62,7 +62,7 @@ function SendtoMachine() {
         if (wsConn != null) {
             SendtoFM(FMspeed);
 
-            addOrIncrease(3, DG_channel, DGspeed); //A to speed
+            addOrIncrease(3, DG_channel, parseInt(DGspeed/2)); //A to speed
             addOrIncrease(3, (DG_channel-1?1:2), 0); //B to speed
     
             sendCustomMsg(DG_wave);
