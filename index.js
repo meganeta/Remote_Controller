@@ -128,7 +128,9 @@ const app = express();
 // Serve static files (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.listen(80, ()=>{
+const PORT = process.env.PORT || 10000;
+
+app.listen(PORT, ()=>{
     console.log('HTTPS Server running on port 80');
 });
 
@@ -154,7 +156,7 @@ const wsshttpsServer = https.createServer({
 //const port = process.env.PORT || 3000;
 //console.log("wss port: "+ port);
 
-const wss = new WebSocket.Server({ server: httpsServer });
+const wss = new WebSocket.Server({ port: PORT });
 
 //const wss = new WebSocket.Server({ server: httpsServer });
 
