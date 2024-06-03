@@ -3,6 +3,10 @@ let stop = document.getElementById('stop');
 let FMspeed = 0;
 let DGspeed = 0;
 
+let horizontalText = "郊 狼";
+let verticalText = "炮 机";
+
+
 //emergency stop button
 stop.onclick = function(){
     try {
@@ -117,9 +121,7 @@ function draw(resize = false) {
     ctx.closePath();
     
     // Horizontal Text at Bottom Center
-    let horizontalText = "郊 狼";
-    let verticalText = "炮 机";
-
+    
     if (con_status == 0) {
         horizontalText = "赛 博 郊 狼";
         verticalText = "赛 博 炮 机";
@@ -258,14 +260,14 @@ function updateChart() {
     DGData.push(100-DGspeed);
     DGData.shift();
 
-    CreateChart(FMchart,FMData);
-    CreateChart(DGchart,DGData);
+    CreateChart(FMchart,FMData,verticalText);
+    CreateChart(DGchart,DGData,horizontalText);
 
     //SendtoMachine();
 }
 
 // Function to create the dynamic bar chart
-function CreateChart(chartContainer,data) {
+function CreateChart(chartContainer,data,BackText) {
     chartContainer.innerHTML = ''; // Clear existing chart
 
     /*
@@ -278,6 +280,7 @@ function CreateChart(chartContainer,data) {
     canvas.height = wrapperHeight;
     */
 
+    
     data.forEach(value => {
         const bar = document.createElement('div');
         bar.classList.add('bar');
@@ -285,6 +288,18 @@ function CreateChart(chartContainer,data) {
         //bar.textContent = value;
         chartContainer.appendChild(bar);
     });
+
+    set_chart_text(chartContainer,100-data[data.length-1],BackText);
+}
+
+function set_chart_text(chartContainer,Speed,BackText){
+    const rect = chartContainer.getBoundingClientRect();
+    
+    const text = document.createElement('div');
+    text.classList.add('background-text');
+    text.style.bottom = (rect.top - rect.bottom)/2 + rect.bottom; // Position the text above the bar
+    text.textContent = BackText+": "+Speed.toString();
+    chartContainer.appendChild(text);
 }
 
 //handle dropdown menus

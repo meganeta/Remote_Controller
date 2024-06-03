@@ -63,6 +63,15 @@ a {
     background-color:#AA336A;
 }
 
+.background-text {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    color: black;
+    font-size: 18px;
+    text-align: center;
+}
+
 .bar {
     flex:1;
     background-color: #ffffff;
