@@ -213,6 +213,10 @@ function handleTouchMove(e) {
         draw();
     }
     e.preventDefault(); // Prevent scrolling
+
+    if (!canvas.contains(e.target)) {
+        handleTouchEnd();
+    }
 }
 
 function handleTouchEnd() {
@@ -241,6 +245,7 @@ function keepDotWithinBounds() {
 canvas.addEventListener('mousedown', handleMouseDown);
 canvas.addEventListener('mousemove', handleMouseMove);
 canvas.addEventListener('mouseup', handleMouseUp);
+canvas.addEventListener('mouseleave', handleMouseUp);
 canvas.addEventListener('touchstart', handleTouchStart);
 canvas.addEventListener('touchmove', handleTouchMove);
 canvas.addEventListener('touchend', handleTouchEnd);

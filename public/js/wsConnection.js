@@ -12,7 +12,7 @@ let followBStrength = false;
 
 var wsConn = null; // 全局ws链接
 
-const wss_address = "wss://con-meganeta.onrender.com/con";
+const wss_address = "ws://192.168.99.224:10000";
 //const wss_address = "ws://192.168.99.224:8443";
 
 //Show status
